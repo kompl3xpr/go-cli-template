@@ -32,9 +32,9 @@ fi
 
 # Verify code builds
 echo "Checking build..."
-if ! go build -o /tmp/build-check ./...; then
+if ! go build -o /tmp/ ./...; then
     echo "Error: Build failed"
-    rm -f /tmp/build-check
+    rm -rf /tmp
     exit 1
 fi
 rm -f /tmp/build-check
