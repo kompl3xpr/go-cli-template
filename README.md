@@ -1,9 +1,9 @@
-Please find and replace all strings in the project root directory:
-> Before | After
+> Global Search and Replace Instructions:
+> Target | Replacement
 > ---|---
-> `"Go CLI Template"` | `<Your Full Project Name>`
-> `"go-cli-template"` | `<Your Project Identifier>`
-> `"kompl3xpr"` | `<Your Username or Organization Name>`
+> `Go CLI Template` | `<Your Full Project Name>`
+> `go-cli-template` | `<Your Project Identifier>`
+> `kompl3xpr` | `<Your Username or Organization Name>`
 
 ---
 
