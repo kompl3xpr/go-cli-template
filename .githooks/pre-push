@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Go project pre-push hook
+# Checks code formatting, build, and tests
+
+set -e
+
+echo "Running pre-push checks..."
+
+# Check code formatting
+echo "Checking code formatting..."
+# Use gofmt -l to check without formatting
+# -l option lists files that need formatting
+if unfmtd_files=$(gofmt -l .); then
+    if [[ -n "$unfmtd_files" ]]; then
+        echo "Error: The following files need formatting:"
+        echo "$unfmtd_files"
+        echo "Please run: go fmt ./... or gofmt -w ."
+        exit 1
+    fi
+else
+    echo "Error: gofmt check failed"
+    exit 1
+fi
+
+# Run static analysis
+echo "Running static analysis..."
+if ! golangci-lint run; then
+    echo "Error: Code requires improvements"
+    exit 1
+fi
+
+# Verify code builds
+echo "Checking build..."
+if ! go build -o /tmp/build-check ./...; then
+    echo "Error: Build failed"
+    rm -f /tmp/build-check
+    exit 1
+fi
+rm -f /tmp/build-check
+
+# Run tests
+echo "Running tests..."
+if ! go test ./...; then
+    echo "Error: Tests failed"
+    exit 1
+fi
+
+echo "✓ All checks passed! Ready to push."
+exit 0

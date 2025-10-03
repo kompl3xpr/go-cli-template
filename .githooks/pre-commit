@@ -1,0 +1,148 @@
+#!/bin/bash
+
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+REGEX='^(feat|fix|docs|style|refactor|test|chore|ci)\/[a-z0-9-]+$'
+export ERROR_MSG="Branch name must match the regex pattern \"${REGEX}\""
+REGEX_PROTECTED='^main$'
+
+if [[ $BRANCH_NAME =~ $REGEX ]]; then
+    echo "✓ Branch name format is correct!"
+elif [[ $BRANCH_NAME =~ $REGEX_PROTECTED ]]; then
+    echo "⚠️  Warning: You are committing to a protected branch!"
+else
+    echo "✗ Branch name format error: \"$BRANCH_NAME\""
+    echo $ERROR_MSG
+    echo "Valid examples:"
+    echo "  feat/add-reload-command-for-cli"
+    echo "  fix/api-get-user-404"
+    echo "  docs/readme-typo"
+    echo "  ..."
+    echo "To fix:"
+    echo "  git branch -m <new-branch-name>    # Rename current branch"
+    echo "  or"
+    echo "  git checkout -b <new-branch-name>  # Create and switch to new branch"
+    exit 1
+fi
+
+
+# Fixed comment template
+LICENSE_HEADER="/*
+ * Copyright (c) 2025 kompl3xpr. All rights reserved.
+ * Use of this source code is governed by a MIT license
+ * that can be found in the LICENSE file."
+
+echo "Updating Go file headers..."
+
+# Get all staged .go files
+STAGED_GO_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$')
+
+if [ -z "$STAGED_GO_FILES" ]; then
+    echo "No staged .go files found."
+    exit 0
+fi
+
+# Get current user and date
+CURRENT_AUTHOR_NAME=$(git config user.name || whoami)
+CURRENT_AUTHOR_EMAIL=$(git config user.email)
+# Combine name and email if available
+if [ -n "$CURRENT_AUTHOR_EMAIL" ]; then
+    CURRENT_AUTHOR="$CURRENT_AUTHOR_NAME <$CURRENT_AUTHOR_EMAIL>"
+else
+    CURRENT_AUTHOR="$CURRENT_AUTHOR_NAME"
+fi
+
+CURRENT_DATE=$(date -u +"%Y-%m-%d %H:%M:%S")
+
+# Temporary file
+TEMP_FILE=$(mktemp)
+
+for file in $STAGED_GO_FILES; do
+    if [ ! -f "$file" ]; then
+        continue
+    fi
+    
+    echo "Processing $file"
+    
+    # Get file relative path
+    FILE_PATH="$file"
+    
+    # Create new header comment
+    NEW_HEADER="$LICENSE_HEADER
+ *
+ * File:               $FILE_PATH
+ * Last modified by:   $CURRENT_AUTHOR
+ * Last modified time: $CURRENT_DATE UTC
+ */
+"
+    
+    # Use awk to process file content
+    awk -v new_header="$NEW_HEADER" '
+    BEGIN { 
+        header_printed = 0
+        in_block_comment = 0
+        skip_next_empty_lines = 0
+        found_code = 0
+    }
+    
+    # Handle block comment start
+    /^\/\*/ {
+        if (!header_printed && !found_code) {
+            in_block_comment = 1
+            skip_next_empty_lines = 1
+            next
+        }
+    }
+    
+    # Handle block comment end
+    in_block_comment && /\*\// {
+        in_block_comment = 0
+        skip_next_empty_lines = 1
+        next
+    }
+    
+    # Skip content within block comments
+    in_block_comment {
+        next
+    }
+    
+    # Skip empty lines after comments
+    skip_next_empty_lines && /^[[:space:]]*$/ {
+        next
+    }
+    
+    # Encounter first non-empty line that is not a comment, print new header
+    !header_printed && !in_block_comment && !/^[[:space:]]*(\/\/|\/\*)/ {
+        if (!found_code) {
+            print new_header
+            header_printed = 1
+            found_code = 1
+            skip_next_empty_lines = 0
+        }
+    }
+    
+    # Print all non-comment content
+    {
+        if (header_printed || found_code) {
+            print
+        }
+    }
+    ' "$file" > "$TEMP_FILE"
+    
+    # Check if file has actual content (avoid empty files)
+    if [ -s "$TEMP_FILE" ]; then
+        # Replace original file
+        mv "$TEMP_FILE" "$file"
+        # Re-add to staging area
+        git add "$file"
+        echo "Updated header for $file"
+    else
+        # If processing failed, restore original file
+        echo "Warning: Processing failed for $file, keeping original"
+        rm -f "$TEMP_FILE"
+    fi
+done
+
+rm -f "$TEMP_FILE"
+echo "✓ Go file headers updated successfully."
+exit 0

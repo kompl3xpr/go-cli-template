@@ -1,0 +1,33 @@
+name: Feature Request
+description: Suggest an enhancement for this project
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Thanks for submitting a 🙋 feature request 😄!**
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to Solve
+      description: >
+        Clearly and concisely describe the problem you're trying to solve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: >
+        Clearly and concisely describe the feature you'd like to see implemented.
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Context
+      description: >
+        Any additional background information or context you believe is relevant to this suggestion.

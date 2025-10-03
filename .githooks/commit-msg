@@ -1,0 +1,24 @@
+#!/bin/bash
+
+MSG_FILE=$1
+FILE_CONTENT="$(cat $MSG_FILE)"
+REGEX="^(feat|fix|docs|style|refactor|test|chore|ci)(\(.+\))?: [a-z].{5,79}$"
+export ERROR_MSG="Commit message must match the regex pattern \"${REGEX}\""
+
+
+if [[ $FILE_CONTENT =~ $REGEX ]]; then
+    echo "✓ Commit message format is correct!"
+else
+    echo "✗ Commit message format error: \"$FILE_CONTENT\""
+    echo $ERROR_MSG
+    echo "Valid examples:"
+    echo "  feat: add \`--reload\` command for CLI"
+    echo "  fix(internal/api): status code of GET v1/users"
+    echo "  docs: fix typo in README.md"
+    echo "  ..."
+    echo "To fix:"
+    echo "  git commit --amend -m \"type: description\""
+    exit 1
+fi
+
+exit 0

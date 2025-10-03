@@ -1,0 +1,70 @@
+name: Bug Report
+description: Create a report to help us improve
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        **Thanks for submitting a bug report!**
+
+  - type: checkboxes
+    attributes:
+      label: Verification Checklist
+      description: Please confirm you have completed the following steps.
+      options:
+        - label: I have searched for similar recent issues at https://github.com/kompl3xpr/go-cli-template/issues?q=is%3Aissue and found no duplicates.
+          required: true
+        - label: I am using the latest version of go-cli-template (according to https://github.com/kompl3xpr/go-cli-template/tags) and can still reproduce this issue.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Description
+      description: >
+        Clearly and concisely describe what the bug is,
+        including both the current behavior and the expected behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction Steps
+      description: Detailed steps to reproduce this bug.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solutions
+    attributes:
+      label: Possible Solutions
+      description: >
+        Optional but helpful: suggest fixes/root causes,
+        or ideas for implementation changes.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Context
+
+  - type: textarea
+    id: version
+    attributes:
+      label: go-cli-template Version
+      description: Output of `go-cli-template --version`
+      render: console
+    validations:
+      required: true
+
+  - type: textarea
+    id: os
+    attributes:
+      label: Operating System Version
+      render: console
+    validations:
+      required: true
