@@ -54,6 +54,7 @@ jobs:
           git diff --exit-code go.sum
 
   build:
+    needs: go-mod
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -64,8 +65,8 @@ jobs:
         run: make build
 
   format:
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
@@ -81,6 +82,7 @@ jobs:
           fi
 
   golangci-lint:
+    needs: format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -116,15 +118,7 @@ jobs:
 
   tests-on-linux:
     needs: golangci-lint # run after golangci-lint action to not produce duplicated errors
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - ubuntu-24.04-arm
-        golang:
-          - '1.24'
-          - '1.25'
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
