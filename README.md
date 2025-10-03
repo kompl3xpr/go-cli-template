@@ -9,9 +9,9 @@
 
 # Go CLI Template
 
-[![GitHub Created At](https://img.shields.io/github/created-at/kompl3xpr/go-cli-template)](####)
-[![GitHub License](https://img.shields.io/github/license/kompl3xpr/go-cli-template)](https://github.com/kompl3xpr/go-cli-template/blob/main/LICENSE)
-[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/kompl3xpr/go-cli-template)](####)
+[![Created At](https://img.shields.io/github/created-at/kompl3xpr/go-cli-template)](####)
+[![License](https://img.shields.io/github/license/kompl3xpr/go-cli-template)](https://github.com/kompl3xpr/go-cli-template/blob/main/LICENSE)
+[![Go version](https://img.shields.io/github/go-mod/go-version/kompl3xpr/go-cli-template)](####)
 [![GitHub Actions Workflow Status Main](https://img.shields.io/github/actions/workflow/status/kompl3xpr/go-cli-template/go.yml?branch=main&label=main)](https://github.com/kompl3xpr/go-cli-template/actions?query=workflow%3AGo+branch%3Amain)
 [![GitHub Issues](https://img.shields.io/github/issues/kompl3xpr/go-cli-template)](https://github.com/kompl3xpr/go-cli-template/issues)
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/kompl3xpr/go-cli-template)](https://github.com/kompl3xpr/go-cli-template/pulls)
